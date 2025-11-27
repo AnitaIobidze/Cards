@@ -98,6 +98,7 @@ export default function App() {
   const [searchTextByDescription, setSearchTextByDescription] = useState("")
   const [likedCards, setLikedCards]=useState([])
   const [filterCard, setFilterCard]=useState(sampleCards)
+  const [sort, setSort]=useState("nothing")  
   
   function likeCard(card){
     const filtered=likedCards.filter(x=>x.id!==card.id)
@@ -119,13 +120,22 @@ export default function App() {
   }
 
   useEffect(() => {
-    const ourCards = sampleCards.filter((card) =>
+    let cards = sampleCards.filter((card) =>
       card.title.toLowerCase().includes(searchTextByTitle.toLowerCase()) &&
       card.description.toLowerCase().includes(searchTextByDescription.toLowerCase())
     );
 
-    setFilterCard(ourCards);
-  }, [searchTextByTitle, searchTextByDescription]);
+    if(sort==="high"){
+      cards=cards.sort((a, b)=>b.price-a.price)
+    }
+    if(sort==="low"){
+      cards=cards.sort((a, b)=>a.price-b.price)
+    }
+    if(sort=="az"){
+      cards=cards.sort((a, b)=>a.title.toLowerCase()>b.title.toLowerCase() ? 1 : -1)
+    }
+    setFilterCard([...cards])
+  }, [searchTextByTitle, searchTextByDescription, sort]);
   useEffect(()=>{
     console.log(sum(likedCards))
   },[likedCards])
@@ -152,6 +162,12 @@ export default function App() {
               value={searchTextByDescription}
               onChange={(e) => setSearchTextByDescription(e.target.value)}
             />
+            <select value={sort} onChange={(e)=>setSort(e.target.value)}>
+              <option value="nothing">Sort by...</option>
+              <option value="high">High - Low</option>
+              <option value="low">Low - High</option>
+              <option value="az">A - Z</option>
+            </select>
           </div>
 
           <div className="grid">
