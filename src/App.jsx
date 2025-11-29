@@ -71,7 +71,7 @@ function Header() {
   );
 }
 
-function Card({ card, likeCard}) {
+function Card({ card, likeCard, openModal, openEditModal}) {
   const [liked, setLiked] = useState(false);
 
   return (
@@ -87,7 +87,8 @@ function Card({ card, likeCard}) {
           <button className="btn ghost" onClick={()=>{setLiked(!liked); likeCard(card)}}>
             {liked ? "★ Liked" : "☆ Like"}
           </button>
-          <button className="btn primary">Open</button>
+          <button className="delete-btn" onClick={()=>openModal(card)}>Delete</button>
+          <button className="btn-primary" onClick={()=>openEditModal(card)}>Edit</button>
         </div>
       </div>
     </div>
@@ -98,8 +99,30 @@ export default function App() {
   const [searchTextByDescription, setSearchTextByDescription] = useState("")
   const [likedCards, setLikedCards]=useState([])
   const [filterCard, setFilterCard]=useState(sampleCards)
-  const [sort, setSort]=useState("nothing")  
+  const [sort, setSort]=useState("nothing") 
+  const [showModal, setShowmodal]=useState(false)
+  const [cardToDelete, setCardToDelete]=useState()
+  const [cardToEdit, setCardToEdit]=useState()
+  const [title, setTitle]=useState("")
+  const [price, setPrice]=useState("")
+  const [tag, setTag]=useState("")
+  const [description, setDescription]=useState("")
   
+  function openModal(card){
+    setShowmodal(true)
+    setCardToDelete(card)
+  }
+  function openEditModal(card){
+    setShowmodal(true)
+    setCardToEdit(card)
+  }
+  function editCard(card){
+    setShowmodal(false)
+  }
+  function deleteCard(id){
+    setFilterCard(prev=>prev.filter(c=>c.id!==id))
+    setShowmodal(false)
+  }
   function likeCard(card){
     const filtered=likedCards.filter(x=>x.id!==card.id)
     if(filtered.length!==likedCards.length){
@@ -172,11 +195,33 @@ export default function App() {
 
           <div className="grid">
             {filterCard.map((c) => (
-              <Card key={c.id} card={c} likeCard={likeCard}/>
+              <Card key={c.id} card={c} likeCard={likeCard} deleteCard={deleteCard} openModal={openModal} openEditModal={openEditModal}/>
             ))}
           </div>
           <p>Total prise is: {sum(likedCards)}</p>
         </div>
+        {showModal && cardToDelete &&(
+          <div class="modal">
+            <p>Are you sure you want to delete: {cardToDelete.title}</p>
+            <div class="modal-content">
+              <button onClick={()=>deleteCard(cardToDelete.id)} className="delete-btn">Delete</button>
+              <button onClick={()=>setShowmodal(false)} className="cancele-btn">Cancel</button>
+            </div>
+          </div>
+        )}
+        {showModal && cardToEdit &&(
+          <div class="edit-modal">
+            <p>Now you are editing: {cardToEdit.title}</p>
+            <div class="edit-modal-content">
+              <input type="text" value={title} onChange={(e)=>setTitle(e.target.value)} placeholder="Title"/>
+              <input type="text" value={description} onChange={(e)=>setDescription(e.target.value)} placeholder="Description"/>
+              <input type="text" value={tag} onChange={(e)=>setTag(e.target.value)} placeholder="Tag"/>
+              <input type="number" value={price} onChange={(e)=>setPrice(e.target.value)} placeholder="Price"/>
+              <button onClick={()=>editCard(cardToEdit.id)} className="done-btn">Done</button>
+              <button onClick={()=>setShowmodal(false)} className="cancele-btn">Cancel</button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

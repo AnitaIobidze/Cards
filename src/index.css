@@ -7,6 +7,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #6b7280;
 }
 .container {
   display: flex;
@@ -191,12 +192,14 @@ body {
 .btn:hover {
   background: var(--bg);
 }
-.btn.primary {
-  background: var(--accent);
-  border-color: var(--accent);
+.btn-primary {
+  background:  #2563eb;
+  border-color:  #2563eb;
   color: white;
+  border-radius: 4px;
+  width: 70px;
 }
-.btn.primary:hover {
+.btn-primary:hover {
   background: #2563eb;
 }
 /* FOOTER */
@@ -219,4 +222,43 @@ body {
 }
 .footer-grid a:hover {
   color: var(--text);
+}
+.delete-btn{
+  background-color: red;
+  color: white;
+  border-radius: 4px;
+  border: none;
+  width: 70px;
+}
+.modal{
+  display: flex;
+  background-color: #f7f8fa;
+  transform: translate(-50%, -50%);
+  justify-content: center;
+  width: 400px;
+  border: none;
+  border-radius: 8px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 170px;
+  padding: 50px;
+  flex-direction: column;
+  position: fixed;
+  z-index: 10;
+  top: 50%;
+  left: 50%; 
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08)
+}
+.modal-content{
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+.cancele-btn{
+  background-color: gainsboro;
+  color: black;
+  border-radius: 4px;
+  border: none;
+  width: 70px;
+  height: 30px;
 }
