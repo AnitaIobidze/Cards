@@ -262,3 +262,38 @@ body {
   width: 70px;
   height: 30px;
 }
+.show-card{
+  width: 600px;
+  height: auto;
+  display: flex;
+  position: fixed;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 20;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f7f8fa;
+  border: none;
+  border-radius: 16px;
+}
+.show-card img{
+  height: 400px;
+}
+.edit-modal{
+  background-color: #f7f8fa;
+  transform: translate(-50%, -50%);
+  justify-content: center;
+  width: 600px;
+  border: none;
+  border-radius: 8px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 50px;
+  flex-direction: column;
+  position: fixed;
+  z-index: 10;
+  top: 50%;
+  left: 50%; 
+}
