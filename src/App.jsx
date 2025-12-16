@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
+import Modal from "./components/modal"
 const sampleCards = [
   {
     id: 1,
@@ -17,7 +18,7 @@ const sampleCards = [
       "Skylines, neon, and late-night vibes for your urban inspiration.",
     image:
       "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1200&auto=format&fit=crop",
-    tag: "Urban",
+    tag: "Nature",
     price: 15,
   },
   {
@@ -27,7 +28,7 @@ const sampleCards = [
       "A path through pines and light — take a breath and reset.",
     image:
       "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1200&auto=format&fit=crop",
-    tag: "Outdoors",
+    tag: "Nature",
     price:20,
   },
   {
@@ -101,6 +102,7 @@ export default function App() {
   const [likedCards, setLikedCards]=useState([])
   const [filterCard, setFilterCard]=useState(sampleCards)
   const [sort, setSort]=useState("nothing") 
+  const [category, setCategory]=useState("nothing")
   const [cardToDelete, setCardToDelete]=useState()
   const [cardToEdit, setCardToEdit]=useState()
   const [title, setTitle]=useState("")
@@ -161,18 +163,20 @@ export default function App() {
       card.title.toLowerCase().includes(searchTextByTitle.toLowerCase()) &&
       card.description.toLowerCase().includes(searchTextByDescription.toLowerCase())
     );
-
+    if(category!=="nothing"){
+      cards=cards.filter(card=>card.tag===category)
+    }
     if(sort==="high"){
       cards=cards.sort((a, b)=>b.price-a.price)
     }
     if(sort==="low"){
       cards=cards.sort((a, b)=>a.price-b.price)
     }
-    if(sort=="az"){
+    if(sort==="az"){
       cards=cards.sort((a, b)=>a.title.toLowerCase()>b.title.toLowerCase() ? 1 : -1)
     }
     setFilterCard([...cards])
-  }, [searchTextByTitle, searchTextByDescription, sort]);
+  }, [searchTextByTitle, searchTextByDescription, sort, category]);
   useEffect(()=>{
     console.log(sum(likedCards))
   },[likedCards])
@@ -205,6 +209,15 @@ export default function App() {
               <option value="low">Low - High</option>
               <option value="az">A - Z</option>
             </select>
+            <select value={category} onChange={(e)=>setCategory(e.target.value)}>
+              <option value="nothing">Choose categori...</option>
+              <option value="Nature">Nature</option>
+              <option value="Urban">Urban</option>
+              <option value="Outdoors">Outdors</option>
+              <option value="Workspace">Workspace</option>
+              <option value="Travel">Travel</option>
+              <option value="Lifestyle">Lifestyle</option>
+            </select>
           </div>
 
           <div className="grid">
@@ -214,31 +227,24 @@ export default function App() {
           </div>
           <p>Total prise is: {sum(likedCards)}</p>
         </div>
-        {showDeleteModal && cardToDelete &&(
-          <div className="modal">
-            <p>Are you sure you want to delete: {cardToDelete.title}</p>
-            <div className="modal-content">
-              <button onClick={()=>deleteCard(cardToDelete.id)} className="delete-btn">Delete</button>
-              <button onClick={()=>setShowDeleteModal(false)} className="cancele-btn">Cancel</button>
-            </div>
-          </div>
+        {cardToDelete &&(
+          <Modal open={showDeleteModal} close={()=>setShowDeleteModal(false)}>
+              <p>Are you sure you want to delete: {cardToDelete?.title}?</p>
+              <button className="delete-btn" onClick={()=>deleteCard(cardToDelete.id)}>Delete</button>
+          </Modal>        
         )}
-        {showEditModal && cardToEdit &&(
-          <div className="edit-modal">
+        {cardToEdit &&(
+          <Modal open={showEditModal} close={()=>setShowEditModal(false)} containerClass="edit-modal-content">
             <p>Now you are editing: {cardToEdit.title}</p>
-            <div className="edit-modal-content">
               <input type="text" value={title} onChange={(e)=>setTitle(e.target.value)} placeholder="Title"/>
               <input type="text" value={description} onChange={(e)=>setDescription(e.target.value)} placeholder="Description"/>
               <input type="text" value={tag} onChange={(e)=>setTag(e.target.value)} placeholder="Tag"/>
               <input type="number" value={price} onChange={(e)=>setPrice(e.target.value)} placeholder="Price"/>
               <button onClick={()=>editCard(cardToEdit.id)} className="done-btn">Done</button>
-              <button onClick={()=>setShowEditModal(false)} className="cancele-btn">Cancel</button>
-            </div>
-          </div>
+          </Modal>
         )}
-        {show && openCard &&(
-          <div className="show-card">
-            <div className="card">
+        {openCard &&(
+          <Modal open={show} close={()=>setShow(false)} containerClass="show-card">
               <div className="card-media">
                 <img src={openCard.image} alt={openCard.title} loading="lazy" />
                 <span className="badge">{openCard.tag}</span>
@@ -250,11 +256,10 @@ export default function App() {
                   <button className="btn ghost">
                     {likedCards.find(x=>x.id===openCard.id) ? "★ Liked" : "☆ Like"}
                   </button>
-                  <button className="delete-btn" onClick={()=>setShow(false)}>Close</button>
                 </div>
               </div>
-            </div>
-          </div>
+            
+          </Modal>
         )}
       </div>
     </>
